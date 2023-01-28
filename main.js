@@ -91,10 +91,8 @@ function ShaderProgram(name, program) {
     this.name = name;
     this.prog = program;
 
-    // Location of the attribute variable in the shader program.
     this.iAttribVertex = -1;
     this.iAttribTexture = -1;
-    // Location of the uniform matrix representing the combined transformation.
     this.iModelViewProjectionMatrix = -1;
 
     this.iUserPoint = -1;
@@ -136,6 +134,7 @@ function draw() {
 
     gl.uniform1i(shProgram.iTMU, 0);
     gl.enable(gl.TEXTURE_2D);
+    gl.uniform2fv(shProgram.iUserPoint, [userPointCoord.x, userPointCoord.y]);
     gl.uniform1f(shProgram.iScale, userScl);
     surface.Draw();
     let loc = getFunc(map(userPointCoord.x, 0, 1, 0, Math.PI * 2), map(userPointCoord.y, 0, 1, 0, Math.PI * 2))
@@ -323,7 +322,7 @@ function LoadTexture() {
     const image = new Image();
     image.crossOrigin = 'anonymus';
 
-    image.src = "https://user-images.githubusercontent.com/121056279/213940546-346f9abb-4761-43aa-90f0-6fd57de95307.png";
+    image.src = "https://raw.githubusercontent.com/ivbabiy-student/CGW/main/pattern.png";
     image.onload = () => {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(
@@ -339,3 +338,29 @@ function LoadTexture() {
     }
 }
 
+
+window.onkeydown = (e) => {
+    switch (e.keyCode) {
+        case 87:
+            userPointCoord.x -= 0.01;
+            break;
+        case 83:
+            userPointCoord.x += 0.01;
+            break;
+        case 65:
+            userPointCoord.y += 0.01;
+            break;
+        case 68:
+            userPointCoord.y -= 0.01;
+            break;
+    }
+    userPointCoord.x = Math.abs(userPointCoord.x % 1)
+    userPointCoord.y = Math.abs(userPointCoord.y % 1)
+    console.log(userPointCoord);
+    draw();
+}
+
+onmousemove = (e) => {
+    userScl = map(e.clientX, 0, window.outerWidth, 0.1, 10.0)
+    draw()
+};
